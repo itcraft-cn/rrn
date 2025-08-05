@@ -1,4 +1,5 @@
 use getopt::{Opt, Parser};
+use regex::Regex;
 use std::{collections::HashMap, env};
 
 #[derive(Debug)]
@@ -21,7 +22,7 @@ pub(crate) enum ParseArgFailure {
 
 #[derive(Debug)]
 pub(crate) struct Param {
-    from: Option<String>,
+    from: Option<Regex>,
     to: Option<String>,
     target: TargetMode,
     exec: ExecMode,
@@ -29,7 +30,7 @@ pub(crate) struct Param {
 impl Param {
     fn new(map: &HashMap<String, String>) -> Self {
         Self {
-            from: map.get("from").map(|x| x.to_string()),
+            from: Option::from(to_regex(map.get("from").map(|x| x.to_string()).unwrap())),
             to: map.get("to").map(|x| x.to_string()),
             target: match map.get("dir") {
                 None => TargetMode::File,
@@ -54,8 +55,8 @@ impl Param {
         false
     }
 
-    pub(crate) fn get_from_pattern(&self) -> String {
-        String::from(self.from.as_ref().unwrap())
+    pub(crate) fn get_from_regex(&self) -> &Regex {
+        self.from.as_ref().unwrap()
     }
 
     pub(crate) fn get_to_pattern(&self) -> String {
@@ -68,6 +69,13 @@ impl Param {
 
     pub(crate) fn get_exec_mode(&self) -> &ExecMode {
         &self.exec
+    }
+}
+
+fn to_regex(from_pattern: String) -> Regex {
+    match Regex::new(&from_pattern) {
+        Ok(regex) => regex,
+        Err(_) => panic!("error: {from_pattern} is not regex pattern"),
     }
 }
 

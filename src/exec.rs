@@ -2,7 +2,6 @@ use crate::{
     fsio::list_current_dir,
     param::{ExecMode, Param},
 };
-use regex::Regex;
 use std::{fs, path::PathBuf};
 
 pub(crate) fn execute(param: &Param) {
@@ -15,7 +14,7 @@ pub(crate) fn execute(param: &Param) {
 
 fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     let mut output_vec = Vec::new();
-    let from_regex = Regex::new(&param.get_from_pattern()).unwrap();
+    let from_regex = param.get_from_regex();
     paths.iter().for_each(|x| {
         let from_target = x.file_name().unwrap().to_string_lossy().to_string();
         let to_result = from_regex
@@ -58,7 +57,7 @@ fn fill(source: &String, max: usize) -> String {
 }
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
-    let from_regex = Regex::new(&param.get_from_pattern()).unwrap();
+    let from_regex = param.get_from_regex();
     paths.iter().for_each(|x| {
         let to_result = from_regex
             .replace_all(

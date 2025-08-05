@@ -1,5 +1,4 @@
 use crate::param::{Param, TargetMode};
-use regex::Regex;
 use std::{
     ffi::OsString,
     fs::{self, ReadDir},
@@ -32,8 +31,7 @@ fn list_entry(
     checker: Box<dyn DirEntryChecker>,
     files_and_dirs: ReadDir,
 ) -> Vec<PathBuf> {
-    let from_pattern = param.get_from_pattern();
-    let from_regex = to_regex(from_pattern);
+    let from_regex = param.get_from_regex();
     files_and_dirs
         .filter(|x| x.is_ok())
         .filter(|x| {
@@ -42,13 +40,6 @@ fn list_entry(
         })
         .map(|x| x.unwrap().path())
         .collect()
-}
-
-fn to_regex(from_pattern: String) -> Regex {
-    match Regex::new(&from_pattern) {
-        Ok(regex) => regex,
-        Err(_) => panic!("error: {from_pattern} is not regex pattern"),
-    }
 }
 
 trait DirEntryChecker {
