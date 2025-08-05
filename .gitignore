@@ -1,0 +1,14 @@
+# dir
+target
+out
+.idea
+.vscode
+
+# file
+*.a
+*.so
+*.iml
+Cargo.lock
+pyvenv.cfg
+flamegraph.*
+perf.*
