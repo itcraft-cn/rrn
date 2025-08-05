@@ -12,3 +12,4 @@ Cargo.lock
 pyvenv.cfg
 flamegraph.*
 perf.*
+.gdb_history
