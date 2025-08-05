@@ -9,5 +9,6 @@ exclude = ["tests"]
 
 [dependencies]
 getopt = "1.1.9"
+regex = "1.11.1"
 
 [dev-dependencies]
