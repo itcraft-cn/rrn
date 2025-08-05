@@ -12,6 +12,26 @@ However, this is a common usage scenario. As a temporary solution, I've created 
 
 It's just a simple toy.
 
+## Usage
+
+```console
+$ rrn
+------------------------------------------------------
+rrn     a rename file / directory tool.
+
+        -f <pattern>, necessary: true
+                from pattern
+        -t <pattern>, necessary: true
+                to pattern
+        -d, optional, default: none
+                rename directories or files, default is rename files.
+        -x, optional, default: dry run
+                execution the rename process
+        -h, optional, default: none
+                output help message
+------------------------------------------------------
+```
+
 ## Change Log
 
 [change log][ChangeLog.md]

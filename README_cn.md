@@ -12,6 +12,26 @@
 
 就是一个简单的玩具。
 
+## 使用说明
+
+```console
+$ rrn
+------------------------------------------------------
+rrn     a rename file / directory tool.
+
+        -f <pattern>, necessary: true
+                from pattern
+        -t <pattern>, necessary: true
+                to pattern
+        -d, optional, default: none
+                rename directories or files, default is rename files.
+        -x, optional, default: dry run
+                execution the rename process
+        -h, optional, default: none
+                output help message
+------------------------------------------------------
+```
+
 ## 变更记录
 
 [变更记录](ChangeLog_cn.md)
