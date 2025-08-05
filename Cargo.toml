@@ -1,9 +1,17 @@
 [package]
 name = "rrn"
-version = "0.1.0"
+version = "0.1.0" # managed by updgitver
 authors = ["Helly Guo <hellyguo@foxmail.com>"]
 edition = "2021"
 exclude = ["tests"]
+homepage = "https://itcraft.cn/rrn/"
+repository = "https://github.com/itcraft-cn/rrn"
+license = "Apache-2.0"
+readme = "README.md"
+description = "batch rename files/dirs by regex"
+categories = ["command-line-utilities"]
+documentation = "https://docs.rs/crate/rrn/latest"
+keywords = ["iBATIS", "MyBatis", "SQL", "Parser", "XML"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
