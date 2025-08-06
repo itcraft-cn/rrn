@@ -61,6 +61,10 @@ fn fill(source: &String, max: usize) -> String {
 }
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
+    if paths.is_empty() {
+        println!("no files/dirs found!");
+        return;
+    }
     let from_regex = param.get_from_regex();
     paths.iter().for_each(|x| {
         let to_result = from_regex
