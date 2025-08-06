@@ -11,7 +11,7 @@ readme = "README.md"
 description = "batch rename files/dirs by regex"
 categories = ["command-line-utilities"]
 documentation = "https://docs.rs/crate/rrn/latest"
-keywords = ["iBATIS", "MyBatis", "SQL", "Parser", "XML"]
+keywords = ["Batch", "Rename", "Regex"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
