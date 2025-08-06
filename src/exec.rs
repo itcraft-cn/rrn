@@ -13,7 +13,7 @@ pub(crate) fn execute(param: &Param) {
 }
 
 fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
-    if paths.len() == 0 {
+    if paths.is_empty() {
         println!("no files/dirs found!");
         return;
     }
