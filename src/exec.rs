@@ -13,6 +13,10 @@ pub(crate) fn execute(param: &Param) {
 }
 
 fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
+    if paths.len() == 0 {
+        println!("no files/dirs found!");
+        return;
+    }
     let mut output_vec = Vec::new();
     let from_regex = param.get_from_regex();
     paths.iter().for_each(|x| {
