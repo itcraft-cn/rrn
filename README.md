@@ -34,4 +34,4 @@ rrn     a rename file / directory tool.
 
 ## Change Log
 
-[change log][ChangeLog.md]
+[change log](ChangeLog.md)
