@@ -82,6 +82,9 @@ fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
         return;
     }
     let from_regex = param.get_from_regex();
+    let mut existed = HashMap::new();
+    let mut ready_vec = Vec::new();
+    let mut conflect_count = 0;
     paths.iter().for_each(|x| {
         let to_result = from_regex
             .replace_all(
@@ -95,11 +98,23 @@ fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
             )
             .to_string();
         let to_file = x.parent().unwrap().join(&to_result);
-        println!(
-            "Move \"{}\" => \"{}\"",
-            x.file_name().unwrap().to_str().unwrap(),
-            to_file.file_name().unwrap().to_str().unwrap(),
-        );
-        fs::rename(x, to_file).unwrap();
+        if existed.contains_key(&to_result) {
+            conflect_count += 1;
+        } else {
+            existed.insert(to_result.clone(), 0);
+            ready_vec.push((x.clone(), to_file));
+        }
     });
+    if conflect_count == 0 {
+        for (from_path, to_path) in ready_vec {
+            println!(
+                "Move \"{}\" => \"{}\"",
+                from_path.file_name().unwrap().to_str().unwrap(),
+                to_path.file_name().unwrap().to_str().unwrap(),
+            );
+            fs::rename(from_path, to_path).unwrap();
+        }
+    } else {
+        print_replace_result(paths, param);
+    }
 }
