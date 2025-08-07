@@ -23,7 +23,8 @@ pub(crate) enum ParseArgFailure {
 
 #[derive(Debug)]
 pub(crate) struct Param {
-    from: Option<Regex>,
+    from: Option<String>,
+    from_regex: Option<Regex>,
     to: Option<String>,
     target: TargetMode,
     exec: ExecMode,
@@ -31,8 +32,15 @@ pub(crate) struct Param {
 impl Param {
     fn new(map: &HashMap<String, String>) -> Self {
         Self {
-            from: Option::from(to_regex(map.get("from").map(|x| x.to_string()).unwrap())),
-            to: map.get("to").map(|x| x.to_string()),
+            from: map
+                .get("from")
+                .or(Some(&String::from("")))
+                .map(|x| x.to_string()),
+            from_regex: None,
+            to: map
+                .get("to")
+                .or(Some(&String::from("")))
+                .map(|x| x.to_string()),
             target: match map.get("dir") {
                 None => TargetMode::File,
                 Some(_) => TargetMode::Dir,
@@ -45,19 +53,24 @@ impl Param {
     }
 
     fn invalid(&self) -> bool {
-        if self.from.is_none() {
+        if check_if_not_exist(&self.from) {
             eprintln!("from not specified");
             return true;
         }
-        if self.to.is_none() {
+        if check_if_not_exist(&self.to) {
             eprintln!("to not specified");
             return true;
         }
         false
     }
 
+    fn compile_regex(&mut self) {
+        self.from_regex
+            .replace(to_regex(self.from.as_ref().unwrap().clone()));
+    }
+
     pub(crate) fn get_from_regex(&self) -> &Regex {
-        self.from.as_ref().unwrap()
+        self.from_regex.as_ref().unwrap()
     }
 
     pub(crate) fn get_to_pattern(&self) -> String {
@@ -78,6 +91,10 @@ fn to_regex(from_pattern: String) -> Regex {
         Ok(regex) => regex,
         Err(_) => panic!("error: {from_pattern} is not regex pattern"),
     }
+}
+
+fn check_if_not_exist(opt: &Option<String>) -> bool {
+    opt.is_none() || opt.as_ref().unwrap().to_string().is_empty()
 }
 
 pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
@@ -112,15 +129,15 @@ pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
         println!(env!("CARGO_PKG_VERSION"));
         return Err(ParseArgFailure::Version);
     }
-    let param = Param::new(&map);
+    let mut param = Param::new(&map);
     if param.invalid() {
-        print_help();
         return Err(ParseArgFailure::Invalid);
     }
+    param.compile_regex();
     Ok(param)
 }
 
-fn print_help() {
+pub(crate) fn print_help() {
     eprintln!("------------------------------------------------------");
     eprintln!("rrn\ta rename file / directory tool.");
     eprintln!();
