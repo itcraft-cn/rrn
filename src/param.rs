@@ -17,6 +17,7 @@ pub(crate) enum ExecMode {
 #[derive(Debug)]
 pub(crate) enum ParseArgFailure {
     Help,
+    Version,
     Invalid,
 }
 
@@ -81,7 +82,7 @@ fn to_regex(from_pattern: String) -> Regex {
 
 pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
     let args = env::args().collect::<Vec<String>>();
-    let mut opts = Parser::new(&args, "hf:t:dx");
+    let mut opts = Parser::new(&args, "vhf:t:dx");
     let mut map = HashMap::new();
     loop {
         let rs = opts.next().transpose();
@@ -94,6 +95,7 @@ pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
                     Opt('d', None) => ("dir".to_string(), "true".to_string()),
                     Opt('x', None) => ("exec".to_string(), "true".to_string()),
                     Opt('h', None) => ("help".to_string(), "true".to_string()),
+                    Opt('v', None) => ("version".to_string(), "true".to_string()),
                     _ => unreachable!(),
                 },
             };
@@ -105,6 +107,10 @@ pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
     if map.is_empty() || map.contains_key("help") {
         print_help();
         return Err(ParseArgFailure::Help);
+    }
+    if map.contains_key("version") {
+        println!(env!("CARGO_PKG_VERSION"));
+        return Err(ParseArgFailure::Version);
     }
     let param = Param::new(&map);
     if param.invalid() {
@@ -126,7 +132,7 @@ fn print_help() {
     eprintln!("\t\trename directories or files, default is rename files.");
     eprintln!("\t-x, optional, default: dry run");
     eprintln!("\t\texecution the rename process");
-    eprintln!("\t-h, optional, default: none");
-    eprintln!("\t\toutput help message");
+    eprintln!("\t-h, output help message");
+    eprintln!("\t-v, output version info");
     eprintln!("------------------------------------------------------");
 }
