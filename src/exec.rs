@@ -3,15 +3,8 @@ use crate::{
     param::{ExecMode, Param},
 };
 use colored::Colorize;
-use std::{collections::HashMap, fs, path::PathBuf};
-
-const STR_FROM: &str = "from";
-const STR_TO: &str = "to";
-const STR_STATUS: &str = "status";
-
-const STR_FROM_LEN: usize = STR_FROM.len();
-const STR_TO_LEN: usize = STR_TO.len();
-const STR_STATUS_LEN: usize = STR_STATUS.len();
+use rust_i18n::t;
+use std::{borrow::Cow, collections::HashMap, fs, path::PathBuf};
 
 pub(crate) fn execute(param: &Param) {
     let paths = list_current_dir(param);
@@ -23,9 +16,18 @@ pub(crate) fn execute(param: &Param) {
 
 fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     if paths.is_empty() {
-        println!("{}", "no files/dirs found!".red());
+        println!("{}", t!("result.no.found").red());
         return;
     }
+
+    let str_from: Cow<'_, str> = t!("label.from");
+    let str_to: Cow<'_, str> = t!("label.to");
+    let str_status: Cow<'_, str> = t!("label.status");
+
+    let str_from_len: usize = str_from.len();
+    let str_to_len: usize = str_to.len();
+    let str_status_len: usize = str_status.len();
+
     let mut output_vec = Vec::new();
     let from_regex = param.get_from_regex();
     let mut existed = HashMap::new();
@@ -44,34 +46,34 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
             )
             .to_string();
         if existed.contains_key(&to_result) {
-            output_vec.push((from_target, to_result, "Duplicated".to_string(), false));
+            output_vec.push((from_target, to_result, t!("status.dup").to_string(), false));
             conflect_count += 1;
         } else {
             existed.insert(to_result.clone(), 0);
-            output_vec.push((from_target, to_result, "OK".to_string(), true));
+            output_vec.push((from_target, to_result, t!("status.ok").to_string(), true));
         }
     });
     let max_left_len = output_vec
         .iter()
         .fold(0, |acc, x| acc.max(x.0.len()))
-        .max(STR_FROM_LEN);
+        .max(str_from_len);
     let max_right_len = output_vec
         .iter()
         .fold(0, |acc, x| acc.max(x.1.len()))
-        .max(STR_TO_LEN);
+        .max(str_to_len);
     let max_status_len = output_vec
         .iter()
         .fold(0, |acc, x| acc.max(x.2.len()))
-        .max(STR_STATUS_LEN);
+        .max(str_status_len);
     // 4 = 4 * "|", 6 = 3 * 2 * ' '
     let len = max_left_len + max_right_len + max_status_len + 4 + 6;
     let separator = vec!['-'; len].iter().collect::<String>();
     println!("{separator}");
     println!(
         "| {} | {} | {} |",
-        fill(&STR_FROM.to_string(), max_left_len).green(),
-        fill(&STR_TO.to_string(), max_right_len).green(),
-        fill(&STR_STATUS.to_string(), max_status_len).green(),
+        fill(&str_from.to_string(), max_left_len).green(),
+        fill(&str_to.to_string(), max_right_len).green(),
+        fill(&str_status.to_string(), max_status_len).green(),
     );
     println!("{separator}");
     output_vec.iter().for_each(|x| {
@@ -85,14 +87,11 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     });
     println!("{separator}");
     if conflect_count == 0 {
-        println!(
-            "{}",
-            "This is dryrun. Execute with '-x' to execute.".green()
-        );
+        println!("{}", t!("result.dryrun.suc").green());
     } else {
         println!(
             "{}",
-            "Duplicate detected {conflect_count} files/dirs, please recheck.".red()
+            t!("result.dryrun.fail",conflect_count=> conflect_count).red()
         );
     }
 }
@@ -103,7 +102,7 @@ fn fill(source: &String, max: usize) -> String {
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
     if paths.is_empty() {
-        println!("{}", "no files/dirs found!".red());
+        println!("{}", t!("result.no.found").red());
         return;
     }
     let from_regex = param.get_from_regex();
@@ -133,9 +132,10 @@ fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
     if conflect_count == 0 {
         for (from_path, to_path) in ready_vec {
             println!(
-                "Move \"{}\" => \"{}\"",
-                from_path.file_name().unwrap().to_str().unwrap(),
-                to_path.file_name().unwrap().to_str().unwrap(),
+                "{}",
+                t!("result.exec.log", 
+                   file1=> from_path.file_name().unwrap().to_str().unwrap(),
+                   file2=> to_path.file_name().unwrap().to_str().unwrap()),
             );
             fs::rename(from_path, to_path).unwrap();
         }

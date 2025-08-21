@@ -1,0 +1,73 @@
+_version: 2
+param.parse.error:
+  en: "The params is not valid"
+  zh-CN: "参数错误"
+param.from.not_specified:
+  en: "The from is not specified"
+  zh-CN: "from 参数未指定"
+param.to.not_specified:
+  en: "The to is not specified"
+  zh-CN: "to 参数未指定"
+param.not.regex:
+  en: "error: %{from_pattern} is not regex pattern"
+  zh-CN: "错误: %{from_pattern} 不是合法的正则表达式"
+help.00:
+  en: "rrn\ta rename file / directory tool."
+  zh-CN: "rrn\t一个文件/目录重命名工具。"
+help.01:
+  en: "\t-f <pattern>, necessary: true"
+  zh-CN: "\t-f <pattern>, 必须指定"
+help.02:
+  en: "\t\tfrom pattern"
+  zh-CN: "\t\t匹配格式"
+help.03:
+  en: "\t-t <pattern>, necessary: true"
+  zh-CN: "\t-t <pattern>, 必须指定"
+help.04:
+  en: "\t\tto pattern"
+  zh-CN: "\t\t目标格式"
+help.05:
+  en: "\t-d, optional, default: none"
+  zh-CN: "\t-d, 可选, 默认: 不指定"
+help.06:
+  en: "\t\trename directories or files, default is rename files."
+  zh-CN: "\t\t是否重命名目录, 默认模式为重命名文件。"
+help.07:
+  en: "\t-x, optional, default: dry run"
+  zh-CN: "\t-x, 可选, 默认: 空跑"
+help.08:
+  en: "\t\texecution the rename process"
+  zh-CN: "\t\t执行重命名操作。"
+help.09:
+  en: "\t-h, output help message"
+  zh-CN: "\t-h, 输出帮助信息"
+help.10:
+  en: "\t-v, output version info"
+  zh-CN: "\t-v, 输出版本信息"
+result.no.found:
+  en: "No file or directory found"
+  zh-CN: "未找到匹配的文件或目录"
+result.dryrun.suc:
+  en: "This is dryrun. Execute with '-x' to execute."
+  zh-CN: "这是空跑模式, 使用 '-x' 执行重命名操作。"
+result.dryrun.fail:
+  en: "Duplicate detected %{conflect_count} files/dirs, please recheck."
+  zh-CN: "检测到重复文件/目录 %{conflect_count} 个, 请检查。"
+result.exec.log:
+  en: "Move \"%{file1}\" => \"%{file2}\""
+  zh-CN: "重命名 \"%{file1}\" => \"%{file2}\""
+label.from:
+  en: "from"
+  zh-CN: "匹配格式"
+label.to:
+  en: "to"
+  zh-CN: "目标格式"
+label.status:
+  en: "status"
+  zh-CN: "状态"
+status.ok:
+  en: "OK"
+  zh-CN: "可用"
+status.dup:
+  en: "Duplicated"
+  zh-CN: "重复"

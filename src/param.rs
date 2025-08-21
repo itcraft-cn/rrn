@@ -1,5 +1,6 @@
 use getopt::{Opt, Parser};
 use regex::Regex;
+use rust_i18n::t;
 use std::{collections::HashMap, env};
 
 #[derive(Debug)]
@@ -54,11 +55,11 @@ impl Param {
 
     fn invalid(&self) -> bool {
         if check_if_not_exist(&self.from) {
-            eprintln!("from not specified");
+            eprintln!("{}", t!("param.from.not_specified"));
             return true;
         }
         if check_if_not_exist(&self.to) {
-            eprintln!("to not specified");
+            eprintln!("{}", t!("param.to.not_specified"));
             return true;
         }
         false
@@ -89,7 +90,7 @@ impl Param {
 fn to_regex(from_pattern: String) -> Regex {
     match Regex::new(&from_pattern) {
         Ok(regex) => regex,
-        Err(_) => panic!("error: {from_pattern} is not regex pattern"),
+        Err(_) => panic!("{}", t!("param.not.regex", from_pattern=> from_pattern)),
     }
 }
 
@@ -139,17 +140,17 @@ pub(crate) fn args2param() -> Result<Param, ParseArgFailure> {
 
 pub(crate) fn print_help() {
     eprintln!("------------------------------------------------------");
-    eprintln!("rrn\ta rename file / directory tool.");
+    eprintln!("{}",t!("help.00"));
     eprintln!();
-    eprintln!("\t-f <pattern>, necessary: true");
-    eprintln!("\t\tfrom pattern");
-    eprintln!("\t-t <pattern>, necessary: true");
-    eprintln!("\t\tto pattern");
-    eprintln!("\t-d, optional, default: none");
-    eprintln!("\t\trename directories or files, default is rename files.");
-    eprintln!("\t-x, optional, default: dry run");
-    eprintln!("\t\texecution the rename process");
-    eprintln!("\t-h, output help message");
-    eprintln!("\t-v, output version info");
+    eprintln!("{}",t!("help.01"));
+    eprintln!("{}",t!("help.02"));
+    eprintln!("{}",t!("help.03"));
+    eprintln!("{}",t!("help.04"));
+    eprintln!("{}",t!("help.05"));
+    eprintln!("{}",t!("help.06"));
+    eprintln!("{}",t!("help.07"));
+    eprintln!("{}",t!("help.08"));
+    eprintln!("{}",t!("help.09"));
+    eprintln!("{}",t!("help.10"));
     eprintln!("------------------------------------------------------");
 }
