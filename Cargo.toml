@@ -1,6 +1,6 @@
 [package]
 name = "rrn"
-version = "0.1.2-dev" # managed by updgitver
+version = "0.1.2" # managed by updgitver
 authors = ["Helly Guo <hellyguo@foxmail.com>"]
 edition = "2021"
 exclude = ["tests"]
