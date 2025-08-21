@@ -17,19 +17,43 @@ It's just a simple toy.
 ```console
 $ rrn
 ------------------------------------------------------
-rrn     a rename file / directory tool.
+rrn	a rename file / directory tool.
 
-        -f <pattern>, necessary: true
-                from pattern
-        -t <pattern>, necessary: true
-                to pattern
-        -d, optional, default: none
-                rename directories or files, default is rename files.
-        -x, optional, default: dry run
-                execution the rename process
-        -h, optional, default: none
-                output help message
-------------------------------------------------------
+	-f <pattern>, necessary: true
+		from pattern
+	-t <pattern>, necessary: true
+		to pattern
+	-d, optional, default: none
+		rename directories or files, default is rename files.
+	-x, optional, default: dry run
+		execution the rename process
+	-h, output help message
+	-v, output version info
+------------------------------------------------------ 
+```
+
+## Example
+
+```console
+$ ls
+acca.txt  accca.txt  acccca.txt  a.txt
+
+$ rrn -f a -t b
+------------------------------------
+| from       | to         | status |
+------------------------------------
+| a.txt      | b.txt      | OK     |
+| acccca.txt | bccccb.txt | OK     |
+| accca.txt  | bcccb.txt  | OK     |
+| acca.txt   | bccb.txt   | OK     |
+------------------------------------
+This is dryrun. Execute with '-x' to execute.
+
+$ rrn -f a -t b -x
+Move "a.txt" => "b.txt"
+Move "acccca.txt" => "bccccb.txt"
+Move "accca.txt" => "bcccb.txt"
+Move "acca.txt" => "bccb.txt" 
 ```
 
 ## Change Log

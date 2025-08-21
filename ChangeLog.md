@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.1.2
+
+colorize output.
+
 ## 0.1.1
 
 detect if found renamed files are duplicated.
