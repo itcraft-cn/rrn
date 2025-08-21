@@ -4,7 +4,8 @@ use crate::{
 };
 use colored::Colorize;
 use rust_i18n::t;
-use std::{borrow::Cow, collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::PathBuf};
+use unicode_display_width::width;
 
 pub(crate) fn execute(param: &Param) {
     let paths = list_current_dir(param);
@@ -20,13 +21,21 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
         return;
     }
 
-    let str_from: Cow<'_, str> = t!("label.from");
-    let str_to: Cow<'_, str> = t!("label.to");
-    let str_status: Cow<'_, str> = t!("label.status");
+    let str_from = t!("label.from");
+    let str_to = t!("label.to");
+    let str_status = t!("label.status");
 
-    let str_from_len: usize = str_from.len();
-    let str_to_len: usize = str_to.len();
-    let str_status_len: usize = str_status.len();
+    let str_from_len = width(&str_from) as usize;
+    let str_to_len = width(&str_to) as usize;
+    let str_status_len = width(&str_status) as usize;
+
+    let str_from_orig_len = str_from.len();
+    let str_to_orig_len = str_to.len();
+    let str_status_orig_len = str_status.len();
+
+    let str_from_adjust = str_from_orig_len - str_from_len;
+    let str_to_adjust = str_to_orig_len - str_to_len;
+    let str_status_adjust = str_status_orig_len - str_status_len;
 
     let mut output_vec = Vec::new();
     let from_regex = param.get_from_regex();
@@ -63,7 +72,7 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
         .max(str_to_len);
     let max_status_len = output_vec
         .iter()
-        .fold(0, |acc, x| acc.max(x.2.len()))
+        .fold(0, |acc, x| acc.max(width(&x.2) as usize))
         .max(str_status_len);
     // 4 = 4 * "|", 6 = 3 * 2 * ' '
     let len = max_left_len + max_right_len + max_status_len + 4 + 6;
@@ -71,13 +80,13 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     println!("{separator}");
     println!(
         "| {} | {} | {} |",
-        fill(&str_from.to_string(), max_left_len).green(),
-        fill(&str_to.to_string(), max_right_len).green(),
-        fill(&str_status.to_string(), max_status_len).green(),
+        fill_adjust(&str_from.to_string(), max_left_len, str_from_adjust).green(),
+        fill_adjust(&str_to.to_string(), max_right_len, str_to_adjust).green(),
+        fill_adjust(&str_status.to_string(), max_status_len, str_status_adjust).green(),
     );
     println!("{separator}");
     output_vec.iter().for_each(|x| {
-        let status = fill(&x.2, max_status_len);
+        let status = fill_adjust(&x.2, max_status_len, x.2.len() - width(&x.2) as usize);
         println!(
             "| {} | {} | {} |",
             fill(&x.0, max_left_len),
@@ -98,6 +107,11 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
 
 fn fill(source: &String, max: usize) -> String {
     format!("{source:<max$}").to_string()
+}
+
+fn fill_adjust(source: &String, max: usize, adjust: usize) -> String {
+    let new_max = max - adjust;
+    fill(source, new_max)
 }
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
