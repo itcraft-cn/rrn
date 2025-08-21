@@ -2,11 +2,8 @@ use crate::{
     fsio::list_current_dir,
     param::{ExecMode, Param},
 };
+use colored::Colorize;
 use std::{collections::HashMap, fs, path::PathBuf};
-
-const COLOR_RED: &str = "\x1b[1;91m";
-const COLOR_GREEN: &str = "\x1b[1;92m";
-const COLOR_NONE: &str = "\x1b[0m";
 
 const STR_FROM: &str = "from";
 const STR_TO: &str = "to";
@@ -26,7 +23,7 @@ pub(crate) fn execute(param: &Param) {
 
 fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     if paths.is_empty() {
-        println!("no files/dirs found!");
+        println!("{}", "no files/dirs found!".red());
         return;
     }
     let mut output_vec = Vec::new();
@@ -71,38 +68,31 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     let separator = vec!['-'; len].iter().collect::<String>();
     println!("{separator}");
     println!(
-        "| {}{}{} | {}{}{} | {}{}{} |",
-        COLOR_GREEN,
-        fill(&STR_FROM.to_string(), max_left_len),
-        COLOR_NONE,
-        COLOR_GREEN,
-        fill(&STR_TO.to_string(), max_right_len),
-        COLOR_NONE,
-        COLOR_GREEN,
-        fill(&STR_STATUS.to_string(), max_status_len),
-        COLOR_NONE,
+        "| {} | {} | {} |",
+        fill(&STR_FROM.to_string(), max_left_len).green(),
+        fill(&STR_TO.to_string(), max_right_len).green(),
+        fill(&STR_STATUS.to_string(), max_status_len).green(),
     );
     println!("{separator}");
     output_vec.iter().for_each(|x| {
+        let status = fill(&x.2, max_status_len);
         println!(
-            "| {} | {} | {}{}{} |",
+            "| {} | {} | {} |",
             fill(&x.0, max_left_len),
             fill(&x.1, max_right_len),
-            if x.3 { COLOR_GREEN } else { COLOR_RED },
-            fill(&x.2, max_status_len),
-            COLOR_NONE
+            if x.3 { status.green() } else { status.red() },
         )
     });
     println!("{separator}");
     if conflect_count == 0 {
         println!(
-            "{}This is dryrun. Execute with '-x' to execute.{}",
-            COLOR_GREEN, COLOR_NONE
+            "{}",
+            "This is dryrun. Execute with '-x' to execute.".green()
         );
     } else {
         println!(
-            "{}Duplicate detected {conflect_count} files/dirs, please recheck.{}",
-            COLOR_RED, COLOR_NONE
+            "{}",
+            "Duplicate detected {conflect_count} files/dirs, please recheck.".red()
         );
     }
 }
@@ -113,7 +103,7 @@ fn fill(source: &String, max: usize) -> String {
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
     if paths.is_empty() {
-        println!("{}no files/dirs found!{}", COLOR_RED, COLOR_NONE);
+        println!("{}", "no files/dirs found!".red());
         return;
     }
     let from_regex = param.get_from_regex();
