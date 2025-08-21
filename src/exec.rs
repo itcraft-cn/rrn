@@ -4,6 +4,18 @@ use crate::{
 };
 use std::{collections::HashMap, fs, path::PathBuf};
 
+const COLOR_RED: &str = "\x1b[1;91m";
+const COLOR_GREEN: &str = "\x1b[1;92m";
+const COLOR_NONE: &str = "\x1b[0m";
+
+const STR_FROM: &str = "from";
+const STR_TO: &str = "to";
+const STR_STATUS: &str = "status";
+
+const STR_FROM_LEN: usize = STR_FROM.len();
+const STR_TO_LEN: usize = STR_TO.len();
+const STR_STATUS_LEN: usize = STR_STATUS.len();
+
 pub(crate) fn execute(param: &Param) {
     let paths = list_current_dir(param);
     match param.get_exec_mode() {
@@ -35,40 +47,66 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
             )
             .to_string();
         if existed.contains_key(&to_result) {
-            output_vec.push((from_target, to_result, String::from("duplicated")));
+            output_vec.push((from_target, to_result, "Duplicated".to_string(), false));
             conflect_count += 1;
         } else {
             existed.insert(to_result.clone(), 0);
-            output_vec.push((from_target, to_result, String::from("OK")));
+            output_vec.push((from_target, to_result, "OK".to_string(), true));
         }
     });
-    let max_left_len = output_vec.iter().fold(0, |acc, x| acc.max(x.0.len()));
-    let max_right_len = output_vec.iter().fold(0, |acc, x| acc.max(x.1.len()));
-    let max_status_len = output_vec.iter().fold(0, |acc, x| acc.max(x.2.len()));
+    let max_left_len = output_vec
+        .iter()
+        .fold(0, |acc, x| acc.max(x.0.len()))
+        .max(STR_FROM_LEN);
+    let max_right_len = output_vec
+        .iter()
+        .fold(0, |acc, x| acc.max(x.1.len()))
+        .max(STR_TO_LEN);
+    let max_status_len = output_vec
+        .iter()
+        .fold(0, |acc, x| acc.max(x.2.len()))
+        .max(STR_STATUS_LEN);
     // 4 = 4 * "|", 6 = 3 * 2 * ' '
     let len = max_left_len + max_right_len + max_status_len + 4 + 6;
     let separator = vec!['-'; len].iter().collect::<String>();
     println!("{separator}");
     println!(
         "| {} | {} | {} |",
-        fill(&String::from("from"), max_left_len),
-        fill(&String::from("to"), max_right_len),
-        fill(&String::from("status"), max_status_len)
+        fill(
+            &format!("{}{}{}", COLOR_GREEN, STR_FROM, COLOR_NONE),
+            max_left_len
+        ),
+        fill(
+            &format!("{}{}{}", COLOR_GREEN, STR_TO, COLOR_NONE),
+            max_right_len
+        ),
+        fill(
+            &format!("{}{}{}", COLOR_GREEN, STR_STATUS, COLOR_NONE),
+            max_status_len
+        )
     );
     println!("{separator}");
     output_vec.iter().for_each(|x| {
         println!(
-            "| {} | {} | {} |",
+            "| {} | {} | {}{}{} |",
             fill(&x.0, max_left_len),
             fill(&x.1, max_right_len),
-            fill(&x.2, max_status_len)
+            if x.3 { COLOR_GREEN } else { COLOR_RED },
+            fill(&x.2, max_status_len),
+            COLOR_NONE
         )
     });
     println!("{separator}");
     if conflect_count == 0 {
-        println!("This is dryrun. Execute with '-x' to execute.");
+        println!(
+            "{}This is dryrun. Execute with '-x' to execute.{}",
+            COLOR_GREEN, COLOR_NONE
+        );
     } else {
-        println!("Duplicate detected {conflect_count} files/dirs, please recheck.");
+        println!(
+            "{}Duplicate detected {conflect_count} files/dirs, please recheck.{}",
+            COLOR_RED, COLOR_NONE
+        );
     }
 }
 
@@ -78,7 +116,7 @@ fn fill(source: &String, max: usize) -> String {
 
 fn exec_replace(paths: Vec<PathBuf>, param: &Param) {
     if paths.is_empty() {
-        println!("no files/dirs found!");
+        println!("{}no files/dirs found!{}", COLOR_RED, COLOR_NONE);
         return;
     }
     let from_regex = param.get_from_regex();
