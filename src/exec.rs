@@ -71,19 +71,16 @@ fn print_replace_result(paths: Vec<PathBuf>, param: &Param) {
     let separator = vec!['-'; len].iter().collect::<String>();
     println!("{separator}");
     println!(
-        "| {} | {} | {} |",
-        fill(
-            &format!("{}{}{}", COLOR_GREEN, STR_FROM, COLOR_NONE),
-            max_left_len
-        ),
-        fill(
-            &format!("{}{}{}", COLOR_GREEN, STR_TO, COLOR_NONE),
-            max_right_len
-        ),
-        fill(
-            &format!("{}{}{}", COLOR_GREEN, STR_STATUS, COLOR_NONE),
-            max_status_len
-        )
+        "| {}{}{} | {}{}{} | {}{}{} |",
+        COLOR_GREEN,
+        fill(&STR_FROM.to_string(), max_left_len),
+        COLOR_NONE,
+        COLOR_GREEN,
+        fill(&STR_TO.to_string(), max_right_len),
+        COLOR_NONE,
+        COLOR_GREEN,
+        fill(&STR_STATUS.to_string(), max_status_len),
+        COLOR_NONE,
     );
     println!("{separator}");
     output_vec.iter().for_each(|x| {
