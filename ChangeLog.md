@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.1.3
+
+support i18n. Currently only support Chinese and English.
+
 ## 0.1.2
 
 colorize output.

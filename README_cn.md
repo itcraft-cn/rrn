@@ -17,19 +17,19 @@
 ```console
 $ rrn
 ------------------------------------------------------
-rrn	a rename file / directory tool.
+rrn	一个文件/目录重命名工具。
 
-	-f <pattern>, necessary: true
-		from pattern
-	-t <pattern>, necessary: true
-		to pattern
-	-d, optional, default: none
-		rename directories or files, default is rename files.
-	-x, optional, default: dry run
-		execution the rename process
-	-h, output help message
-	-v, output version info
------------------------------------------------------- 
+	-f <pattern>, 必须指定
+		匹配格式
+	-t <pattern>, 必须指定
+		目标格式
+	-d, 可选, 默认: 不指定
+		是否重命名目录, 默认模式为重命名文件。
+	-x, 可选, 默认: 空跑
+		执行重命名操作。
+	-h, 输出帮助信息
+	-v, 输出版本信息
+------------------------------------------------------
 ```
 
 ## 使用样例
@@ -39,21 +39,21 @@ $ ls
 acca.txt  accca.txt  acccca.txt  a.txt
 
 $ rrn -f a -t b
-------------------------------------
-| from       | to         | status |
-------------------------------------
-| a.txt      | b.txt      | OK     |
-| acccca.txt | bccccb.txt | OK     |
-| accca.txt  | bcccb.txt  | OK     |
-| acca.txt   | bccb.txt   | OK     |
-------------------------------------
-This is dryrun. Execute with '-x' to execute.
+----------------------------------
+| 匹配格式   | 目标格式   | 状态 |
+----------------------------------
+| a.txt      | b.txt      | 可用 |
+| acccca.txt | bccccb.txt | 可用 |
+| accca.txt  | bcccb.txt  | 可用 |
+| acca.txt   | bccb.txt   | 可用 |
+----------------------------------
+这是空跑模式, 使用 '-x' 执行重命名操作。
 
 $ rrn -f a -t b -x
-Move "a.txt" => "b.txt"
-Move "acccca.txt" => "bccccb.txt"
-Move "accca.txt" => "bcccb.txt"
-Move "acca.txt" => "bccb.txt" 
+重命名 "a.txt" => "b.txt"
+重命名 "acccca.txt" => "bccccb.txt"
+重命名 "accca.txt" => "bcccb.txt"
+重命名 "acca.txt" => "bccb.txt"
 ```
 
 ## 变更记录
